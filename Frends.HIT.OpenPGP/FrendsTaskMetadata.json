@@ -1,0 +1,16 @@
+﻿{
+  "Tasks": [
+    {
+      "TaskMethod": "Frends.HIT.OpenPGP.FrendsInterface.Encrypt"
+    },
+    {
+      "TaskMethod": "Frends.HIT.OpenPGP.FrendsInterface.EncryptBytes"
+    },
+    {
+      "TaskMethod": "Frends.HIT.OpenPGP.FrendsInterface.Decrypt"
+    },
+    {
+      "TaskMethod": "Frends.HIT.OpenPGP.FrendsInterface.DecryptBytes"
+    }
+  ]
+}

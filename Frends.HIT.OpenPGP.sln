@@ -2,6 +2,8 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Frends.HIT.OpenPGP", "Frends.HIT.OpenPGP\Frends.HIT.OpenPGP.csproj", "{0F1850EB-6607-4E79-B0C7-513D59D97437}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Frends.HIT.OpenPGP.Tests", "Frends.HIT.OpenPGP.Tests\Frends.HIT.OpenPGP.Tests.csproj", "{86D6A3E6-8DF7-4722-B86D-686F30903E5B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +14,9 @@ Global
 		{0F1850EB-6607-4E79-B0C7-513D59D97437}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0F1850EB-6607-4E79-B0C7-513D59D97437}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0F1850EB-6607-4E79-B0C7-513D59D97437}.Release|Any CPU.Build.0 = Release|Any CPU
+		{86D6A3E6-8DF7-4722-B86D-686F30903E5B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{86D6A3E6-8DF7-4722-B86D-686F30903E5B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{86D6A3E6-8DF7-4722-B86D-686F30903E5B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{86D6A3E6-8DF7-4722-B86D-686F30903E5B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

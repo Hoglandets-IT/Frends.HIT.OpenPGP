@@ -4,6 +4,15 @@
         <TargetFramework>net6.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <Title>Frends OpenPGP Library</Title>
+        <Authors>Lars Scheibling &lt;Hoglandets IT&gt;</Authors>
+        <Description> </Description>
+        <Version>1.0.4</Version>
     </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="BouncyCastle.OpenPGP" Version="2.0.0.1" />
+    </ItemGroup>
 
 </Project>
