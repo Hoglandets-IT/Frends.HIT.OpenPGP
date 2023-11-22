@@ -8,11 +8,11 @@
         <Title>Frends OpenPGP Library</Title>
         <Authors>Lars Scheibling &lt;Hoglandets IT&gt;</Authors>
         <Description> </Description>
-        <Version>1.0.5</Version>
+        <Version>1.0.8</Version>
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="BouncyCastle.Cryptography" Version="2.1.0" />
+      <PackageReference Include="BouncyCastle.Cryptography" Version="2.2.1" />
     </ItemGroup>
 
 </Project>

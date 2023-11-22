@@ -77,21 +77,20 @@ public class Encryption
                 using (var compDataIn = cData.GetDataStream())
                 {
                     of = new PgpObjectFactory(compDataIn);
+                    
+                    message = of.NextPgpObject();
+                    if (message is PgpOnePassSignatureList) message = of.NextPgpObject();
+
+                    var llitData = (PgpLiteralData)message;
+                    var lunc = llitData.GetInputStream();
+                    Streams.PipeAll(lunc, outputStream);
                 }
-
-                message = of.NextPgpObject();
-                if (message is PgpOnePassSignatureList) message = of.NextPgpObject();
-                
-                var llitData = (PgpLiteralData)message;
-                var lunc = llitData.GetInputStream();
-                Streams.PipeAll(lunc, outputStream);
-
                 break;
             
             case PgpLiteralData litData:
-                var unc = litData.GetInputStream();
-                Streams.PipeAll(unc, outputStream);
-            
+                using (var unc = litData.GetInputStream())
+                    Streams.PipeAll(unc, outputStream);
+                
                 break;
             
             case PgpOnePassSignatureList _:
@@ -99,7 +98,8 @@ public class Encryption
             default:
                 throw new PgpException("Message is not a simple encrypted file - type unknown");
         }
-        
+
+
         return true;
     }
 }

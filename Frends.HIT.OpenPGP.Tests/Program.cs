@@ -12,6 +12,8 @@ public class Program
             PublicKey = LocalSettings.GetHoglandetPublic(),
             ArmorResult = true,
             EncryptionType = Definitions.PgpEncryptionType.AES256,
+            Compression = true,
+            CompressionType = Definitions.PgpCompressionType.ZIP
         };
 
         var encBytesInput = new OpenPGP.Definitions.PgpEncryptBytesInput()
@@ -29,14 +31,14 @@ public class Program
         var decrInput = new OpenPGP.Definitions.PgpDecryptInput()
         {
             InputData = encResult.EncryptedText,
-            PrivateKey = LocalSettings.GetHoglandetPrivate().Replace("\n", "\r\n"),
+            PrivateKey = LocalSettings.GetHoglandetPrivate().ReplaceLineEndings(),
             PrivateKeyPassword = LocalSettings.HoglandetPassword
         };
 
         var decrBytesInput = new OpenPGP.Definitions.PgpDecryptBytesInput()
         {
             InputData = encBytesResult.EncryptedBytes,
-            PrivateKey = LocalSettings.GetHoglandetPrivate().Replace("\n", "\r\n"),
+            PrivateKey = LocalSettings.GetHoglandetPrivate().ReplaceLineEndings(),
             PrivateKeyPassword = LocalSettings.HoglandetPassword
         };
         
