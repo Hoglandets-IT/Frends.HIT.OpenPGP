@@ -47,6 +47,7 @@ public class Definitions
         public string InputData { get; set; }
 
         [DisplayFormat(DataFormatString = "Expression")]
+        [PasswordPropertyText]
         public string PrivateKey { get; set; }
 
         [PasswordPropertyText]
@@ -65,6 +66,7 @@ public class Definitions
         public string InputData { get; set; }
 
         [DisplayFormat(DataFormatString = "Expression")]
+        [PasswordPropertyText]
         public string PrivateKey { get; set; }
 
         [PasswordPropertyText]
@@ -76,6 +78,7 @@ public class Definitions
         public byte[] InputData { get; set; }
 
         [DisplayFormat(DataFormatString = "Expression")]
+        [PasswordPropertyText]
         public string PrivateKey { get; set; }
 
         [PasswordPropertyText]
@@ -152,6 +155,7 @@ public class Definitions
         public string InputData { get; set; }
 
         [DisplayFormat(DataFormatString = "Expression")]
+        [PasswordPropertyText]
         public string PrivateKey { get; set; }
 
         [PasswordPropertyText]

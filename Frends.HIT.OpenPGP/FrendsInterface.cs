@@ -6,7 +6,7 @@ namespace Frends.HIT.OpenPGP;
 
 public class FrendsInterface
 {
-    internal const int EncryptBufferSize = 1 << 16;
+    internal const int EncryptBufferSize = 1 << 24;
     public static Definitions.PgpDecryptResult DecryptBytes(Definitions.PgpDecryptBytesInput input)
     {
         var outputStream = new MemoryStream();
@@ -88,12 +88,14 @@ public class FrendsInterface
         var outputStream = new MemoryStream();
         
         using (var inputStream = Helpers.StreamFromString(input.InputData))
-        using (var encryptedOut = Helpers.GetEncryptionStream(input.ArmorResult ? new ArmoredOutputStream(outputStream) : outputStream, input))
+        using (Stream armorStream = new ArmoredOutputStream(outputStream))
+        using (var encryptedOut = Helpers.GetEncryptionStream(armorStream, input))
         using (var compressedOut = Helpers.GetCompressionStream(encryptedOut, input))
         {
             var literalDataGenerator = new PgpLiteralDataGenerator();
-            
-            using (var literalOut = literalDataGenerator.Open(compressedOut, PgpLiteralData.Utf8, "data", inputStream.Length, DateTime.Now))
+            using (var literalOut = literalDataGenerator.Open(compressedOut, PgpLiteralData.Binary, "data",
+                       inputStream.Length,
+                       DateTime.Now))
             {
                 var buffer = new byte[EncryptBufferSize];
                 int len;
@@ -102,16 +104,13 @@ public class FrendsInterface
                     literalOut.Write(buffer, 0, len);
                 }
             }
-
-            compressedOut.Flush();
-            encryptedOut.Flush();
-        }
-
-        
-        
+        };
+ 
         var encBytes = outputStream.ToArray();
         var encString = Encoding.UTF8.GetString(encBytes);
 
+        Console.WriteLine(encString);
+        
         return new Definitions.PgpEncryptResult()
         {
             EncryptedBytes = encBytes,
