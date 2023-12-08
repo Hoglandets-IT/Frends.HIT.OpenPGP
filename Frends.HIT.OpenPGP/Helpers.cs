@@ -1,9 +1,10 @@
-﻿using Org.BouncyCastle.Bcpg;
+﻿using System.Text.RegularExpressions;
+using Org.BouncyCastle.Bcpg;
 using Org.BouncyCastle.Bcpg.OpenPgp;
 using Org.BouncyCastle.Security;
 namespace Frends.HIT.OpenPGP;
 
-public class Helpers
+public static class Helpers
 {
     internal static Stream StreamFromBytearray(byte[] ba)
     {
@@ -54,14 +55,6 @@ public class Helpers
         encryptedDataGenerator.AddMethod(publicKey);
         return encryptedDataGenerator.Open(stream, new byte[FrendsInterface.EncryptBufferSize]);
     }
-    internal static Stream GetEncryptionStream(Stream stream, Definitions.PgpEncryptBytesInput input)
-    {
-        SymmetricKeyAlgorithmTag algorithmTag = Helpers.ConvertEnum<SymmetricKeyAlgorithmTag>(input.EncryptionType);
-        PgpPublicKey publicKey = ReadPublicKey(input.PublicKey);
-        PgpEncryptedDataGenerator encryptedDataGenerator = new PgpEncryptedDataGenerator(algorithmTag, input.IntegrityCheck, new SecureRandom());
-        encryptedDataGenerator.AddMethod(publicKey);
-        return encryptedDataGenerator.Open(stream, new byte[FrendsInterface.EncryptBufferSize]);
-    }
 
     internal static Stream GetCompressionStream(Stream stream, Definitions.PgpEncryptInput input)
     {
@@ -75,16 +68,38 @@ public class Helpers
 
         return stream;
     }
-    internal static Stream GetCompressionStream(Stream stream, Definitions.PgpEncryptBytesInput input)
+
+    internal static PgpSecretKeyRingBundle GetSecretKeyringBundle(string privateKey)
     {
-        if (input.ArmorResult)
+        Stream privateKeyStream = StreamFromString(privateKey);
+        
+        PgpSecretKeyRingBundle pgpKeyring;
+        Stream pgpDecoderStream;
+        
+        try
         {
-            CompressionAlgorithmTag compressionTag =
-                Helpers.ConvertEnum<CompressionAlgorithmTag>(input.CompressionType);
-            PgpCompressedDataGenerator compressedDataGenerator = new PgpCompressedDataGenerator(compressionTag);
-            return compressedDataGenerator.Open(stream);
+            pgpDecoderStream = PgpUtilities.GetDecoderStream(privateKeyStream); 
+            pgpKeyring = new PgpSecretKeyRingBundle(pgpDecoderStream);
+
+        } catch (Exception er)
+        {
+            // Failed to decrypt key, try insering additional newline at first line
+            privateKeyStream.Position = 0;
+            var reader = new StreamReader(privateKeyStream);
+            var newPrivateKey = reader.ReadToEnd();
+            
+            var newPkStream = new MemoryStream();
+            var writer = new StreamWriter(newPkStream);
+            var regex = new Regex(Regex.Escape("--\r\n"));
+            writer.Write(regex.Replace(newPrivateKey.ReplaceLineEndings(), "--\r\n\r\n"), 1);
+            writer.Flush();
+            
+            newPkStream.Position = 0;
+            
+            pgpDecoderStream = PgpUtilities.GetDecoderStream(newPkStream);
+            pgpKeyring = new PgpSecretKeyRingBundle(pgpDecoderStream);
         }
 
-        return stream;
+        return pgpKeyring;
     }
 }

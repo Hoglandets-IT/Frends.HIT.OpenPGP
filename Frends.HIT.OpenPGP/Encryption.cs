@@ -1,46 +1,46 @@
 ﻿using System.Text.RegularExpressions;
+using Org.BouncyCastle.Bcpg;
 using Org.BouncyCastle.Bcpg.OpenPgp;
 using Org.BouncyCastle.Utilities.IO;
 
 namespace Frends.HIT.OpenPGP;
 
-public class Encryption
+public static class Encryption
 {
-    internal static bool Decrypt(Stream inputStream, Stream privateKeyStream, string password, Stream outputStream)
+    internal static bool Decrypt(Stream inputStream, string privateKey, string password, Stream outputStream)
     {
         PgpPrivateKey sKey = null;
         PgpPublicKeyEncryptedData pbe = null;
         PgpEncryptedDataList encData;
         
-        privateKeyStream.Position = 0;
         
         var pgpFactory = new PgpObjectFactory(PgpUtilities.GetDecoderStream(inputStream));
-        
-        PgpSecretKeyRingBundle pgpKeyring;
-        Stream pgpDecoderStream;
-        try
-        {
-            pgpDecoderStream = PgpUtilities.GetDecoderStream(privateKeyStream); 
-            pgpKeyring = new PgpSecretKeyRingBundle(pgpDecoderStream);
-
-        } catch (Exception er)
-        {
-            // Failed to decrypt key, try insering additional newline at first line
-            privateKeyStream.Position = 0;
-            var reader = new StreamReader(privateKeyStream);
-            var newPrivateKey = reader.ReadToEnd();
-            
-            var newPkStream = new MemoryStream();
-            var writer = new StreamWriter(newPkStream);
-            var regex = new Regex(Regex.Escape("--\r\n"));
-            writer.Write(regex.Replace(newPrivateKey, "--\r\n\r\n"), 1);
-            writer.Flush();
-            
-            newPkStream.Position = 0;
-            
-            pgpDecoderStream = PgpUtilities.GetDecoderStream(newPkStream);
-            pgpKeyring = new PgpSecretKeyRingBundle(pgpDecoderStream);
-        }
+        var pgpKeyring = Helpers.GetSecretKeyringBundle(privateKey);
+        // PgpSecretKeyRingBundle pgpKeyring;
+        // Stream pgpDecoderStream;
+        // try
+        // {
+        //     pgpDecoderStream = PgpUtilities.GetDecoderStream(privateKeyStream); 
+        //     pgpKeyring = new PgpSecretKeyRingBundle(pgpDecoderStream);
+        //
+        // } catch (Exception er)
+        // {
+        //     // Failed to decrypt key, try insering additional newline at first line
+        //     privateKeyStream.Position = 0;
+        //     var reader = new StreamReader(privateKeyStream);
+        //     var newPrivateKey = reader.ReadToEnd();
+        //     
+        //     var newPkStream = new MemoryStream();
+        //     var writer = new StreamWriter(newPkStream);
+        //     var regex = new Regex(Regex.Escape("--\r\n"));
+        //     writer.Write(regex.Replace(newPrivateKey, "--\r\n\r\n"), 1);
+        //     writer.Flush();
+        //     
+        //     newPkStream.Position = 0;
+        //     
+        //     pgpDecoderStream = PgpUtilities.GetDecoderStream(newPkStream);
+        //     pgpKeyring = new PgpSecretKeyRingBundle(pgpDecoderStream);
+        // }
 
         var o = pgpFactory.NextPgpObject();
 

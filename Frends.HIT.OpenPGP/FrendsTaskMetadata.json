@@ -11,6 +11,12 @@
     },
     {
       "TaskMethod": "Frends.HIT.OpenPGP.FrendsInterface.DecryptBytes"
+    },
+    {
+      "TaskMethod": "Frends.HIT.OpenPGP.FrendsInterface.Sign"
+    },
+    {
+      "TaskMethod": "Frends.HIT.OpenPGP.FrendsInterface.VerifySignature"
     }
   ]
 }
