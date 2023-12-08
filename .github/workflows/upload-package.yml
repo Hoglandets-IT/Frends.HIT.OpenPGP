@@ -1,9 +1,9 @@
 ﻿on:
   push:
-    paths: ['Frends.HIT.OpenPGP/**', '.github/workflows/upload-package.yml']
+    paths: ['Frends.HIT.OpenPGP/**', '.github/workflows/upload-package.yml', 'VERSION']
     branches: ['main']
   pull_request:
-    paths: ['Frends.HIT.OpenPGP/**', '.github/workflows/upload-package.yml']
+    paths: ['Frends.HIT.OpenPGP/**', '.github/workflows/upload-package.yml', 'VERSION']
     branches: ['main']
 
 jobs:
