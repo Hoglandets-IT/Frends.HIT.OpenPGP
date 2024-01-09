@@ -19,7 +19,7 @@ jobs:
       run: |
         dotnet restore Frends.HIT.OpenPGP/Frends.HIT.OpenPGP.csproj
         dotnet build --configuration Release Frends.HIT.OpenPGP/Frends.HIT.OpenPGP.csproj /p:Version=$GITHUB_REF_NAME
-        dotnet pack --configuration Release Frends.HIT.OpenPGP/Frends.HIT.OpenPGP.csproj /p:Version=$GITHUB_REF_NAME
+        dotnet pack --configuration Release --include-source Frends.HIT.OpenPGP/Frends.HIT.OpenPGP.csproj /p:Version=$GITHUB_REF_NAME
         dotnet nuget push Frends.HIT.OpenPGP/bin/Release/Frends.HIT.OpenPGP.*.nupkg --source ${{ secrets.FRENDS_NUGET_FEED_URL }} --api-key ${{ secrets.FRENDS_NUGET_FEED_KEY }}
     - name: Upload binaries to release
       uses: svenstaro/upload-release-action@v2

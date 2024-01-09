@@ -100,7 +100,7 @@ namespace Frends.HIT.OpenPGP
 
                 var signatureGenerator = new PgpSignatureGenerator(pgpSecretKey.PublicKey.Algorithm, digest);
                 var signatureSubpacketGenerator = new PgpSignatureSubpacketGenerator();
-                
+
                 signatureGenerator.InitSign(PgpSignature.BinaryDocument, pgpPrivateKey);
 
                 var enumerator = pgpSecretKey.PublicKey.GetUserIds().GetEnumerator();
@@ -205,7 +205,8 @@ namespace Frends.HIT.OpenPGP
         /// </returns>
         public static Definitions.PgpEncryptResult SignAndEncrypt(Definitions.PgpSignAndEncryptInput input)
         {
-            var signatureInput = new Definitions.PgpSignatureInput(){
+            var signatureInput = new Definitions.PgpSignatureInput()
+            {
                 InputDataFormat = input.InputDataFormat,
                 InputDataString = input.InputDataString,
                 InputDataBytes = input.InputDataBytes,
@@ -218,7 +219,8 @@ namespace Frends.HIT.OpenPGP
 
             var signResult = Sign(signatureInput);
 
-            var encryptionInput = new Definitions.PgpEncryptInput(){
+            var encryptionInput = new Definitions.PgpEncryptInput()
+            {
                 InputDataFormat = Definitions.DataFormat.Bytes,
                 InputDataBytes = signResult.SignatureBytes,
                 Compression = input.EncryptionCompression,
@@ -230,8 +232,48 @@ namespace Frends.HIT.OpenPGP
             };
 
             var encryptionResult = Encrypt(encryptionInput);
-            
+
             return encryptionResult;
+        }
+
+        /// <summary>
+        /// First signs, then encrypts the given data with settings for Swedbank
+        /// </summary>
+        /// <param name="input">Parameters for signature and encryption</param>
+        /// <returns>
+        /// PgpEncryptResult { 
+        ///     EncryptedBytes byte[] The bytearray with the encryption result
+        ///     EncryptedText string The string with the encryption result
+        /// } 
+        /// </returns>
+        public static byte[] SwedbankSignEncrypt(Definitions.SwedbankSignEncryptInput input)
+        {
+            var signInput = new Definitions.PgpSignatureInput(){
+                InputDataFormat = Definitions.DataFormat.Bytes,
+                InputDataBytes = input.InputData,
+                InputDataIdentifier = "data",
+                ArmorResult = false,
+                HashFunction = Definitions.PgpHashFunctionType.SHA256,
+                PrivateKey = input.SignaturePrivateKey,
+                PrivateKeyPassword = input.SignaturePrivateKeyPassword
+            };
+
+            var signResult = Sign(signInput);
+
+            var encryptInput = new Definitions.PgpEncryptInput() {
+                InputDataBytes = signResult.SignatureBytes,
+                Compression = true,
+                CompressionType = Definitions.PgpCompressionType.ZLIB,
+                InputDataFormat = Definitions.DataFormat.Bytes,
+                IntegrityCheck = true,
+                PublicKey = input.EncryptionPublicKey,
+                EncryptionType = Definitions.PgpEncryptionType.AES256,
+                ArmorResult = false
+            };
+
+            var encryptResult = Encrypt(encryptInput);
+
+            return encryptResult.EncryptedBytes;
         }
     }
 }

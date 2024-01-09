@@ -321,6 +321,47 @@ public static class Definitions
         public string EncryptedText { get; set; }
     }
 
+
+/// <summary>
+/// Input for the Swedbank-specific Sign and Encrypt function
+/// </summary>
+public class SwedbankSignEncryptInput {
+
+    /// <summary>
+    /// The input data to be signed
+    /// </summary>
+    /// <value></value>
+    [Display(Name = "Input Data")]
+    [DisplayFormat(DataFormatString = "Expression")]
+    public byte[] InputData { get; set; }
+
+    /// <summary>
+    /// The private key for the signature
+    /// </summary>
+    /// <value></value>
+    [Display(Name = "Hoglandet Private Key")]
+    [PasswordPropertyText]
+    [DisplayFormat(DataFormatString = "Expression")]
+    public string SignaturePrivateKey { get; set; }
+
+    /// <summary>
+    /// The password for the signature private key
+    /// </summary>
+    /// <value></value>
+    [Display(Name = "Hoglandet Private Key Password")]
+    [PasswordPropertyText]
+    [DisplayFormat(DataFormatString = "Expression")]
+    public string SignaturePrivateKeyPassword { get; set; }
+
+    /// <summary>
+    /// The public key to use for encryption
+    /// </summary>
+    /// <value></value>
+    [Display(Name = "Swedbank Public Key")]
+    public string EncryptionPublicKey { get; set; }
+}
+
+
     /// <summary>
     /// Input configuration for Sign and Encrypt
     /// </summary>
