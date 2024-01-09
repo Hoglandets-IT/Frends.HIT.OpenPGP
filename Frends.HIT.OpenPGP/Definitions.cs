@@ -320,6 +320,113 @@ public static class Definitions
         public byte[] EncryptedBytes { get; set; }
         public string EncryptedText { get; set; }
     }
+
+    /// <summary>
+    /// Input configuration for Sign and Encrypt
+    /// </summary>
+    public class PgpSignAndEncryptInput {
+        /// <summary>
+        /// The format of the input data
+        /// </summary>
+        [DefaultValue(DataFormat.Bytes)]
+        public DataFormat InputDataFormat { get; set; }
+        
+        /// <summary>
+        /// The input data as a string
+        /// </summary>
+        [UIHint(nameof(InputDataFormat), "", DataFormat.String)]
+        public string InputDataString { get; set; }
+        
+        /// <summary>
+        /// The input data as bytes
+        /// </summary>
+        [UIHint(nameof(InputDataFormat), "", DataFormat.Bytes)]
+        public byte[] InputDataBytes { get; set; }
+
+        /// <summary>
+        /// Get a memory stream containing the input data
+        /// </summary>
+        /// <returns></returns>
+        public Stream GetInputStream()
+        {
+            if (InputDataFormat == DataFormat.String)
+            {
+                return Helpers.StreamFromString(InputDataString);
+            }
+
+            return Helpers.StreamFromBytearray(InputDataBytes);
+        }
+
+        /// <summary>
+        /// The identifier for the input data, normally the previous filename
+        /// </summary>
+        [DefaultValue("data")]
+        public string InputDataIdentifier { get; set; } = "data";
+
+        /// <summary>
+        /// The private key used to sign the data
+        /// </summary>
+        [DisplayFormat(DataFormatString = "Expression")]
+        [PasswordPropertyText]
+        public string SignaturePrivateKey { get; set; }
+
+        /// <summary>
+        /// The password for the private key
+        /// </summary>
+        [DisplayFormat(DataFormatString = "Expression")]
+        [PasswordPropertyText]
+        public string SignaturePrivateKeyPassword { get; set; }
+
+        /// <summary>
+        /// PublicKey used to encrypt the data
+        /// </summary>
+        [DisplayFormat(DataFormatString = "Expression")]
+        public string EncryptionPublicKey { get; set; }
+
+        /// <summary>
+        /// What hash function to use for the signature
+        /// </summary>
+        [DefaultValue(PgpHashFunctionType.SHA256)]
+        public PgpHashFunctionType SignatureHashFunction { get; set; }
+        
+        /// <summary>
+        /// Whether to armor the result
+        /// </summary>
+        [DefaultValue(false)]
+        public bool ArmorSignatureResult { get; set; }
+
+        /// <summary>
+        /// Whether to armor the result
+        /// </summary>
+        [DefaultValue(true)]
+        public bool ArmorEncryptionResult { get; set; }
+        
+        /// <summary>
+        /// Whether to perform an integrity check once encryption has finished
+        /// </summary>
+        [DefaultValue(true)]
+        public bool EncryptionIntegrityCheck { get; set; }
+        
+        /// <summary>
+        /// Whether to compress the data before encryption
+        /// </summary>
+        [DefaultValue(true)]
+        public bool EncryptionCompression { get; set; }
+        
+        /// <summary>
+        /// The compression type to use for the data
+        /// </summary>
+        [DefaultValue(PgpCompressionType.ZLIB)]
+        [UIHint(nameof(EncryptionCompression), "", true)]
+        public PgpCompressionType EncryptionCompressionType { get; set; }
+        
+        /// <summary>
+        /// The type of encryption to use
+        /// </summary>
+        [DefaultValue(PgpEncryptionType.AES256)]
+        public PgpEncryptionType EncryptionType { get; set; }
+
+    }
     
     /// <summary>
     /// The input for the Sign step

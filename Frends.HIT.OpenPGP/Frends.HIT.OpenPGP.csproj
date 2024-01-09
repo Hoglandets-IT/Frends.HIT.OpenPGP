@@ -5,12 +5,18 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>disable</Nullable>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <Title>Frends OpenPGP Library</Title>
         <Authors>Lars Scheibling &lt;Hoglandets IT&gt;</Authors>
         <Description> </Description>
-        <Version>1.2.0</Version>
+        <Version>1.3.0</Version>
     </PropertyGroup>
-
+    <ItemGroup>
+      <None Include="FrendsTaskMetadata.json" Pack="true" PackagePath="/">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+    
     <ItemGroup>
       <PackageReference Include="BouncyCastle.Cryptography" Version="2.2.1" />
     </ItemGroup>

@@ -4,3 +4,9 @@ obj/
 riderModule.iml
 /_ReSharper.Caches/
 Frends.HIT.OpenPGP.Tests/LocalSettings.cs
+LocalSettings.cs
+Frends.HIT.OpenPGP/*.nupkg
+testfile.xml
+localtest.asc
+localtest.txt
+*.GPG

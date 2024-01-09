@@ -132,11 +132,124 @@ public class Program
         Console.WriteLine("Verified: " + verifyResult.ValidatedDataText);
         Console.WriteLine("Signature: " + signResult.SignatureText);
     }
+
+    internal static void TestSwedbankSignEncrypt() 
+    {
+        string Filename = "data";
+        // string Data = "Hello World";
+        byte[] Data = File.ReadAllBytes("testfile.xml");
+
+        var signInput = new Definitions.PgpSignatureInput(){
+            InputDataFormat = Definitions.DataFormat.Bytes,
+            InputDataBytes = Data,
+            InputDataIdentifier = Filename,
+            ArmorResult = false,
+            HashFunction = Definitions.PgpHashFunctionType.SHA256,
+            PrivateKey = LocalSettings.GetHoglandetPrivate(),
+            PrivateKeyPassword = LocalSettings.HoglandetPassword,
+        };
+
+        var signResult = FrendsInterface.Sign(signInput);
+
+        var encryptInput = new Definitions.PgpEncryptInput() {
+            InputDataBytes = signResult.SignatureBytes,
+            Compression = true,
+            CompressionType = Definitions.PgpCompressionType.ZLIB,
+            InputDataFormat = Definitions.DataFormat.Bytes,
+            IntegrityCheck = true,
+            PublicKey = LocalSettings.GetSwedbankPublic(),
+            EncryptionType = Definitions.PgpEncryptionType.AES256,
+            ArmorResult = false
+        };
+
+        var encryptResult = FrendsInterface.Encrypt(encryptInput);
+        File.WriteAllBytes("062220001412F001.PAIN001.P240108.T161111.GPG", encryptResult.EncryptedBytes);
+        Console.WriteLine(encryptResult);
+    }
+
+    internal static void TestLocalSignEncrypt() 
+    {
+        string Filename = "data";
+        // string Data = "Hello World";
+        byte[] Data = File.ReadAllBytes("testfile.xml");
+
+        var signInput = new Definitions.PgpSignatureInput(){
+            InputDataFormat = Definitions.DataFormat.Bytes,
+            InputDataBytes = Data,
+            InputDataIdentifier = Filename,
+            ArmorResult = false,
+            HashFunction = Definitions.PgpHashFunctionType.SHA256,
+            PrivateKey = LocalSettings.GetHoglandetPrivate(),
+            PrivateKeyPassword = LocalSettings.HoglandetPassword,
+        };
+
+        var signResult = FrendsInterface.Sign(signInput);
+
+        var encryptInput = new Definitions.PgpEncryptInput() {
+            InputDataBytes = signResult.SignatureBytes,
+            Compression = true,
+            CompressionType = Definitions.PgpCompressionType.ZLIB,
+            InputDataFormat = Definitions.DataFormat.Bytes,
+            IntegrityCheck = true,
+            PublicKey = LocalSettings.GetTestSwedbankPublic(),
+            EncryptionType = Definitions.PgpEncryptionType.AES256,
+            ArmorResult = false
+        };
+
+        var encryptResult = FrendsInterface.Encrypt(encryptInput);
+        File.WriteAllBytes("TESTPGP-062220001412F001.PAIN001.P240108.T161111.GPG", encryptResult.EncryptedBytes);
+        Console.WriteLine(encryptResult);
+    }
     
     public static void Main()
     {
-        // TestEncryptDecrypt("Hello World!");
-        TestSignVerify("Hello World");
+        TestLocalSignEncrypt();
+        TestSwedbankSignEncrypt();
+
+        var signandencrypt = new Definitions.PgpSignAndEncryptInput(){
+            InputDataFormat = Definitions.DataFormat.String,
+            InputDataString = "Hello World",
+            InputDataIdentifier = "data",
+            SignaturePrivateKey = LocalSettings.GetHoglandetPrivate(),
+            SignaturePrivateKeyPassword = LocalSettings.HoglandetPassword,
+            EncryptionPublicKey = LocalSettings.GetSwedbankPublic(),
+            SignatureHashFunction = Definitions.PgpHashFunctionType.SHA256,
+            ArmorSignatureResult = false,
+            ArmorEncryptionResult = true,
+            EncryptionIntegrityCheck = true,
+            EncryptionCompression = true,
+            EncryptionCompressionType = Definitions.PgpCompressionType.BZIP2,
+            EncryptionType = Definitions.PgpEncryptionType.AES256
+        // TestSwedbankSignEncrypt();
+        };
+
+        var res = FrendsInterface.SignAndEncrypt(signandencrypt);
+
+        Console.WriteLine(res.EncryptedText);
+        Console.WriteLine(res);
+
+        var decryptinput = new Definitions.PgpDecryptInput(){
+            InputDataFormat = Definitions.DataFormat.String,
+            InputDataString = res.EncryptedText,
+            PrivateKey = LocalSettings.GetHoglandetPrivate(),
+            PrivateKeyPassword = LocalSettings.HoglandetPassword
+        };
+
+        var decrypt = FrendsInterface.Decrypt(decryptinput);
+
+        var validateinput = new Definitions.PgpVerifySignatureInput(){
+            InputDataFormat = Definitions.DataFormat.Bytes,
+            InputDataBytes = decrypt.DecryptedBytes,
+            PublicKey = LocalSettings.GetHoglandetPublic()
+        };
+
+        var validate = FrendsInterface.VerifySignature(validateinput);
+
+        Console.WriteLine(validate);
+
+
+
+
     }
 }
 

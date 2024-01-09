@@ -4,19 +4,16 @@
       "TaskMethod": "Frends.HIT.OpenPGP.FrendsInterface.Encrypt"
     },
     {
-      "TaskMethod": "Frends.HIT.OpenPGP.FrendsInterface.EncryptBytes"
-    },
-    {
       "TaskMethod": "Frends.HIT.OpenPGP.FrendsInterface.Decrypt"
-    },
-    {
-      "TaskMethod": "Frends.HIT.OpenPGP.FrendsInterface.DecryptBytes"
     },
     {
       "TaskMethod": "Frends.HIT.OpenPGP.FrendsInterface.Sign"
     },
     {
       "TaskMethod": "Frends.HIT.OpenPGP.FrendsInterface.VerifySignature"
+    },
+    {
+      "TaskMethod": "Frends.HIT.OpenPGP.FrendsInterface.SignAndEncrypt"
     }
   ]
 }
