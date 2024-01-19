@@ -1,7 +1,7 @@
 ﻿using System.Text;
 using Org.BouncyCastle.Bcpg;
 using Org.BouncyCastle.Bcpg.OpenPgp;
-
+using PgpCore;
 namespace Frends.HIT.OpenPGP
 {
     public class FrendsInterface
@@ -138,6 +138,7 @@ namespace Frends.HIT.OpenPGP
             };
         }
 
+        
         /// <summary>
         /// Verifies a PGP signature. The data can be provided via string or byte array.
         /// </summary>
@@ -246,34 +247,62 @@ namespace Frends.HIT.OpenPGP
         ///     EncryptedText string The string with the encryption result
         /// } 
         /// </returns>
-        public static byte[] SwedbankSignEncrypt(Definitions.SwedbankSignEncryptInput input)
+        public static async Task<byte[]> SwedbankSignEncrypt(Definitions.SwedbankSignEncryptInput input)
         {
-            var signInput = new Definitions.PgpSignatureInput(){
-                InputDataFormat = Definitions.DataFormat.Bytes,
-                InputDataBytes = input.InputData,
-                InputDataIdentifier = "data",
-                ArmorResult = false,
-                HashFunction = Definitions.PgpHashFunctionType.SHA256,
-                PrivateKey = input.SignaturePrivateKey,
-                PrivateKeyPassword = input.SignaturePrivateKeyPassword
-            };
+            EncryptionKeys encryptionKeys;
+        
+            using (Stream pubkeyStream = Helpers.StreamFromString(input.EncryptionPublicKey))
+            using (Stream privkeyStream = Helpers.StreamFromString(input.SignaturePrivateKey))
+            {
+                encryptionKeys = new EncryptionKeys(pubkeyStream, privkeyStream, input.SignaturePrivateKeyPassword);
+            }
 
-            var signResult = Sign(signInput);
+            PGP pgp = new PGP(encryptionKeys);
+            Stream outputStream;
 
-            var encryptInput = new Definitions.PgpEncryptInput() {
-                InputDataBytes = signResult.SignatureBytes,
-                Compression = true,
-                CompressionType = Definitions.PgpCompressionType.ZLIB,
-                InputDataFormat = Definitions.DataFormat.Bytes,
-                IntegrityCheck = true,
-                PublicKey = input.EncryptionPublicKey,
-                EncryptionType = Definitions.PgpEncryptionType.AES256,
-                ArmorResult = false
-            };
-
-            var encryptResult = Encrypt(encryptInput);
-
-            return encryptResult.EncryptedBytes;
+            using (Stream inputStream = Helpers.StreamFromBytearray(input.InputData))
+            using (outputStream = new MemoryStream())
+            {
+            
+                await pgp.EncryptStreamAndSignAsync(
+                    inputStream, 
+                    outputStream, 
+                    false, 
+                    true, 
+                    input.InputDataIdentifier, 
+                    null, 
+                true);
+            }
+        
+            var byteResp = ((MemoryStream)outputStream).ToArray();
+            return byteResp;
+            
+            // var signInput = new Definitions.PgpSignatureInput(){
+            //     InputDataFormat = Definitions.DataFormat.Bytes,
+            //     InputDataBytes = input.InputData,
+            //     InputDataIdentifier = "data",
+            //     ArmorResult = false,
+            //     HashFunction = Definitions.PgpHashFunctionType.SHA256,
+            //     PrivateKey = input.SignaturePrivateKey,
+            //     PrivateKeyPassword = input.SignaturePrivateKeyPassword
+            // };
+            //
+            // var signResult = Sign(signInput);
+            //
+            // var encryptInput = new Definitions.PgpEncryptInput() {
+            //     InputDataBytes = signResult.SignatureBytes,
+            //     Compression = true,
+            //     CompressionType = Definitions.PgpCompressionType.ZLIB,
+            //     InputDataFormat = Definitions.DataFormat.Bytes,
+            //     IntegrityCheck = true,
+            //     PublicKey = input.EncryptionPublicKey,
+            //     EncryptionType = Definitions.PgpEncryptionType.AES256,
+            //     ArmorResult = false
+            // };
+            //
+            // var encryptResult = Encrypt(encryptInput);
+            //
+            // return encryptResult.EncryptedBytes;
         }
     }
 }

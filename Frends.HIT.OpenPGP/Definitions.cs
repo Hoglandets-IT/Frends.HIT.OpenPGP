@@ -326,7 +326,6 @@ public static class Definitions
 /// Input for the Swedbank-specific Sign and Encrypt function
 /// </summary>
 public class SwedbankSignEncryptInput {
-
     /// <summary>
     /// The input data to be signed
     /// </summary>
@@ -335,6 +334,13 @@ public class SwedbankSignEncryptInput {
     [DisplayFormat(DataFormatString = "Expression")]
     public byte[] InputData { get; set; }
 
+    /// <summary>
+    /// The data identifier (filename) for the input data
+    /// </summary>
+    [Display(Name = "Input Data Identifier (outputFilename")]
+    [DisplayFormat(DataFormatString = "Expression")]
+    public string InputDataIdentifier { get; set; }
+    
     /// <summary>
     /// The private key for the signature
     /// </summary>

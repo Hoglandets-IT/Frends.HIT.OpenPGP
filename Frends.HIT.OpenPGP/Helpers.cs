@@ -6,14 +6,14 @@ namespace Frends.HIT.OpenPGP;
 
 public static class Helpers
 {
-    internal static Stream StreamFromBytearray(byte[] ba)
+    public static Stream StreamFromBytearray(byte[] ba)
     {
         var stream = new MemoryStream();
         stream.Write(ba, 0, ba.Length);
         stream.Position = 0;
         return stream;
     }
-    internal static Stream StreamFromString(string s)
+    public static Stream StreamFromString(string s)
     {
         var stream = new MemoryStream();
         var writer = new StreamWriter(stream);
