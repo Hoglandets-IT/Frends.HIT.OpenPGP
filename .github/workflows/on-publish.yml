@@ -23,7 +23,7 @@ jobs:
           dotnet build --configuration Release ${{ github.event.repository.name }}/${{ github.event.repository.name }}.csproj /p:Version=$GITHUB_REF_NAME
           dotnet pack --configuration Release ${{ github.event.repository.name }}/${{ github.event.repository.name }}.csproj --include-source /p:Version=$GITHUB_REF_NAME
           dotnet nuget add source --name hit-registry --store-password-in-clear-text --username ${{ secrets.FRENDS_NUGET_V2_FEED_USER }} --password '${{ secrets.FRENDS_NUGET_V2_FEED_KEY }}' ${{ secrets.FRENDS_NUGET_V2_FEED_URL }}
-          dotnet nuget push ${{ github.event.repository.name }}/bin/Release/${{ github.event.repository.name }}.*.nupkg --source ${{ secrets.FRENDS_NUGET_FEED_URL }} --api-key ${{ secrets.FRENDS_NUGET_FEED_KEY }}
+          dotnet nuget push --source hit-registry ${{ github.event.repository.name }}/bin/Release/${{ github.event.repository.name }}.*.nupkg --skip-duplicate
       
       - name: Upload binaries to release
         uses: svenstaro/upload-release-action@v2
